@@ -17,7 +17,7 @@ class plugin_const_calculation_test extends DokuWikiTest {
             .'formular=value1 * 10 +2'.DOKU_LF
             .'result:formular'.DOKU_LF
             .'</const>'.DOKU_LF
-            .'%%result%%'.DOKU_LF,
+            .§§3result§§'.DOKU_LF,
             'setup for test');
         $HTML = p_wiki_xhtml('test:plugin_const:math');
         $this->assertTrue(strpos($HTML, '42') !== false, 'Calculation is 42');
