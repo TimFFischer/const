@@ -70,7 +70,7 @@ class action_plugin_const extends DokuWiki_Action_Plugin {
             $autoindex = 0;
             foreach ($data as $entry) {
                 //normal const
-                $item = explode("=", trim($entry));
+                $item = explode("=", trim($entry), 2);
                 if (count($item) === 2) {
                     //special string-replace
                     switch ($item[1]) {
@@ -126,7 +126,7 @@ class action_plugin_const extends DokuWiki_Action_Plugin {
                             $invalidate = true;
                             break; //current unix timestamp
                         case "%AUTOINDEX%":
-                            $item[1] = "%%INDEX#" . (++$autoindex) . "%%"; //special automatic indexer
+                            $item[1] = "§§INDEX#" . (++$autoindex) . "§§"; //special automatic indexer
                             break;
                         case "%REVISION%":
                             $tmp_info = pageinfo();
@@ -142,15 +142,15 @@ class action_plugin_const extends DokuWiki_Action_Plugin {
                     } 
                     
                     //replace in wiki
-                    $wikified = str_replace("%%" . trim($item[0]) . "%%", $item[1], $wikified);
+                    $wikified = str_replace("§§" . trim($item[0]) . "§§", $item[1], $wikified);
                     
                     //load evaluator
-                    @$math->evaluate($item[0]."=".$item[1]);
+                    @$math->assign_and_evaluate($item[0]."=".$item[1]);
                 } else {
                     //evaluate expression
                     $item = explode(":", $entry);
                     if (count($item) === 2) {
-                        $wikified = str_replace("%%" . trim($item[0]) . "%%", @$math->evaluate($item[1]), $wikified);
+                        $wikified = str_replace("§§" . trim($item[0]) . "§§", @$math->assign_and_evaluate($item[1]), $wikified);
                     }
                 }
             }
@@ -159,7 +159,7 @@ class action_plugin_const extends DokuWiki_Action_Plugin {
             while ($autoindex > 0) {
                 $this->autoindexer = 1;
                 //replace all
-                $wikified    = preg_replace_callback("|%%INDEX#" . $autoindex . "%%|", array(
+                $wikified    = preg_replace_callback("|§§INDEX#" . $autoindex . "§§|", array(
                     $this,
                     "_replacecallback"
                 ), $wikified);
